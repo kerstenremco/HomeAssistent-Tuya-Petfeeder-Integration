@@ -1,17 +1,15 @@
-feed:
-  name: Feed Pet
-  description: Trigger a manual feeding event.
+dispense:
+  name: Dispense Portion
+  description: Dispense a portion of food from the pet feeder.
   fields:
-    portions:
-      description: Number of portions to feed
-      example: 1
-      required: true
-      default: 1
-ligth:
-  name: Toggle Light
-  description: Toggle the feeder's light on or off.
-  fields:
-    state:
-      description: Desired state of the light (on/off)
-      example: "on"
-      required: true
+    amount:
+      name: Amount
+      description: Number of portions to dispense.
+      required: false
+      example: 2
+      selector:
+        number:
+          min: 1
+          max: 20
+          step: 1
+          mode: box
