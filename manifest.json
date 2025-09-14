@@ -1,0 +1,6 @@
+{
+  "domain": "petfeeder",
+  "name": "Pet Feeder",
+  "version": "1.0.0",
+  "requirements": ["tinytuya==1.17.4"]
+}
