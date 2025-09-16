@@ -1,18 +1,20 @@
 from homeassistant.components.switch import SwitchEntity
 from homeassistant.helpers.entity import DeviceInfo
+from homeassistant.helpers.update_coordinator import CoordinatorEntity
 from .const import DOMAIN
 from .feeder import Feeder
 
 
 async def async_setup_entry(hass, entry, async_add_entities):
     feeder = hass.data[DOMAIN][entry.entry_id]["feeder"]
-    async_add_entities([PetFeederLed(feeder)], True)
+    coordinator = hass.data[DOMAIN][entry.entry_id]["coordinator"]
+    async_add_entities([PetFeederLed(coordinator, feeder)], True)
 
 
-class PetFeederLed(SwitchEntity):
-    def __init__(self, feeder: Feeder):
+class PetFeederLed(CoordinatorEntity, SwitchEntity):
+    def __init__(self, coordinator, feeder):
+        super().__init__(coordinator)
         self._feeder = feeder
-        self._is_on = False
         self._attr_name = "Pet Feeder LED"
         self._attr_unique_id = f"pet_feeder_led_{self._feeder.device.id}"
 
@@ -22,7 +24,7 @@ class PetFeederLed(SwitchEntity):
 
     @property
     def is_on(self):
-        return self._is_on
+        return self.coordinator.data.get("led_status", False)
 
     @property
     def device_info(self):
@@ -34,13 +36,9 @@ class PetFeederLed(SwitchEntity):
         )
 
     async def async_turn_on(self, **kwargs):
-        success = await self._feeder.turn_on_light()
-        if success:
-            self._is_on = True
-            self.async_write_ha_state()
+        await self._feeder.async_toggle_light(True)
+        self.coordinator.data.update({"led_status": True})
 
     async def async_turn_off(self, **kwargs):
-        success = await self._feeder.turn_off_light()
-        if success:
-            self._is_on = False
-            self.async_write_ha_state()
+        await self._feeder.async_toggle_light(False)
+        self.coordinator.data.update({"led_status": False})

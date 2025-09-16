@@ -5,22 +5,35 @@ from homeassistant.core import HomeAssistant
 import logging
 import voluptuous as vol
 from .feeder import Feeder
+from .coordinator import FeederCoordinator
 
 logger = logging.getLogger(__name__)
 
 
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry):
     """Set up from a config entry."""
+    name = entry.data.get("name")
+    host = entry.data.get("host")
+    device_id = entry.data.get("device_id")
+    local_key = entry.data.get("local_key")
+    api_key = entry.data.get("api_key")
+    api_secret = entry.data.get("api_secret")
+    region = entry.data.get("region")
     feeder = Feeder(
-        name=entry.data["name"],
-        host=entry.data["host"],
-        device_id=entry.data["device_id"],
-        local_key=entry.data["local_key"]
+        name=name,
+        device_id=device_id,
+        local_key=local_key,
+        host=host,
+        api_key=api_key,
+        api_secret=api_secret,
+        region=region,
     )
+    coordinator = FeederCoordinator(hass, feeder)
+    await coordinator.async_config_entry_first_refresh()
 
     hass.data.setdefault(DOMAIN, {})[entry.entry_id] = {
         "feeder": feeder,
-        "last_dispense": None
+        "coordinator": coordinator
     }
 
     hass.async_create_task(
@@ -30,6 +43,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry):
     async def dispense_service(call):
         amount = call.data.get("amount", 1)
         await feeder.feed_portion(amount)
+        coordinator.increment_dispense_counter(amount)
 
     dispense_schema = vol.Schema({
         vol.Optional("amount", default=1): int
@@ -52,3 +66,5 @@ async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry):
     if all(unload_ok):
         hass.data[DOMAIN].pop(entry.entry_id)
     return all(unload_ok)
+    hass.data[DOMAIN].pop(entry.entry_id)
+    return True

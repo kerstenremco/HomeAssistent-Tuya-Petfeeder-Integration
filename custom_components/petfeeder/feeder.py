@@ -4,33 +4,59 @@ import base64
 
 
 class Feeder:
-    def __init__(self, name: str, host: str, device_id: str, local_key: str):
-        self.name = name
-        self.device = tinytuya.Device(device_id, host, local_key, version=3.3)
-        self.device.set_socketRetryDelay(0.5)
-        self.device.set_socketRetryLimit(3)
-        self.device.set_socketTimeout(1)
+    def __init__(self, name: str, device_id: str, local_key: str, host: str | None, api_key: str | None, api_secret: str | None, region: str | None):
+        self.name: str = name
+        self.device_id: str = device_id
+        self.local_key: str = local_key
+        self.host: str | None = host
+        self.api_key: str | None = api_key
+        self.api_secret: str | None = api_secret
+        self.region: str | None = region
+        self.device = tinytuya.Device(device_id, host, local_key, version=3.3,
+                                      connection_timeout=1, connection_retry_delay=0.5, connection_retry_limit=3)
 
-    async def turn_on_light(self) -> bool:
-        loop = asyncio.get_running_loop()
-        result = await loop.run_in_executor(None, self.device.set_value, 19, True)
+    def get_light_status(self) -> bool:
+        status = self.device.status()
+        return status['dps'].get('19', False)
+
+    async def async_get_led_status(self) -> bool:
+        result = await asyncio.get_running_loop().run_in_executor(None, self.get_light_status)
+        return result
+
+    def toggle_light(self, turn_on: bool) -> bool:
+        result = self.device.set_value(19, turn_on)
         return 'dps' in result
 
-    async def turn_off_light(self) -> bool:
-        loop = asyncio.get_running_loop()
-        result = await loop.run_in_executor(
-            None, self.device.set_value, 19, False)
-        return 'dps' in result
+    async def async_toggle_light(self, turn_on: bool) -> bool:
+        result = await asyncio.get_running_loop().run_in_executor(None, self.toggle_light, turn_on)
+        return result
 
     async def feed_portion(self, portions) -> bool:
         loop = asyncio.get_running_loop()
         result = await loop.run_in_executor(None, self.device.set_value, 3, portions)
         return 'dps' in result
 
-    async def check_connection(self) -> bool:
-        loop = asyncio.get_running_loop()
-        status = await loop.run_in_executor(None, self.device.status)
-        return 'dps' in status
+    def check_local_connection(self):
+        self.device = tinytuya.Device(self.device_id, self.host, self.local_key, connection_timeout=1, version=3.3,
+                                      connection_retry_delay=0.5, connection_retry_limit=3)
+        status = self.device.status()
+        return status
+
+    async def async_check_local_connection(self):
+        result = await asyncio.get_running_loop().run_in_executor(None, self.check_local_connection)
+        if 'Error' in result:
+            raise Exception(result['Error'])
+
+    def check_cloud_connection(self):
+        c = tinytuya.Cloud(self.region, self.api_key,
+                           self.api_secret, self.device_id)
+        result = c.getdevices()
+        return result
+
+    async def async_check_cloud_connection(self):
+        result = await asyncio.get_running_loop().run_in_executor(None, self.check_cloud_connection)
+        if 'Error' in result:
+            raise Exception(result['Error'])
 
     def _decode_plan(self):
         # TODO: implement fetching, https://community.home-assistant.io/t/pet-feeder-entities/454077/60

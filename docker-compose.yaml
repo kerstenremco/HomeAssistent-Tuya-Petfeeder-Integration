@@ -1,0 +1,21 @@
+version: "3.7"
+services:
+  ##################
+  # Home Assistant #
+  ##################
+  homeassistant:
+    image: ghcr.io/home-assistant/home-assistant:stable
+    container_name: homeassistant
+    volumes:
+      - haconfig:/config:rw
+      - /etc/localtime:/etc/localtime:ro
+      - ./custom_components:/config/custom_components
+    ports:
+      - 8123:8123
+    environment:
+      - TZ=Europe/Amsterdam
+    restart: unless-stopped
+
+volumes:
+  haconfig:
+    name: homeassistant
