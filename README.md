@@ -24,7 +24,7 @@ This Home Assistant integration allows you to connect to your Tuya Pet Feeder. T
 
 ## Configuration
 
-1. Find the Device ID and Local Key of the petfeeder. Check this blog for instructions.
+1. Find the Device ID and Local Key of the petfeeder. Check [this blog post](https://remcokersten.nl/posts/get-tuya-localkey/) for instructions.
 2. Navigate in HA to **Settings → Devices & Services → Add Integration**.
 3. Search for **Tuya Pet Feeder**.
 4. Enter the details:
@@ -38,10 +38,7 @@ This Home Assistant integration allows you to connect to your Tuya Pet Feeder. T
 
 Contributions and feature requests are welcome! Feel free to open an issue or submit a pull request.
 
-The following features needs to be implemented:
-
-- A
-- B
+Check the [issues page](https://github.com/kerstenremco/HomeAssistent-Tuya-Petfeeder-Integration/issues?q=state%3Aopen%20label%3Aenhancement) for features that needs to be implemented!
 
 ## License
 
