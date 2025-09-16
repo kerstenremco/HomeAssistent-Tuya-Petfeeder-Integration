@@ -1,7 +1,7 @@
 {
-  "domain": "petfeeder",
-  "name": "Pet Feeder",
-  "version": "0.1.2",
+  "domain": "tuyapetfeeder",
+  "name": "Tuya Pet Feeder",
+  "version": "0.2.0",
   "documentation": "https://github.com/kerstenremco/HomeAssistent-Tuya-Petfeeder-Integration",
   "requirements": ["tinytuya==1.17.4"],
   "integration_type": "device",

@@ -1,3 +1,3 @@
-DOMAIN = "petfeeder"
+DOMAIN = "tuyapetfeeder"
 PLATFORMS = ["switch", "binary_sensor", "sensor", "button"]
 DEFAULT_SCAN_INTERVAL = 30
