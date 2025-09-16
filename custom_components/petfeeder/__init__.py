@@ -29,6 +29,8 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry):
         region=region,
     )
     coordinator = FeederCoordinator(hass, feeder)
+
+    await coordinator.async_load_data()
     await coordinator.async_config_entry_first_refresh()
 
     hass.data.setdefault(DOMAIN, {})[entry.entry_id] = {
@@ -42,8 +44,8 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry):
 
     async def dispense_service(call):
         amount = call.data.get("amount", 1)
-        await feeder.feed_portion(amount)
-        coordinator.increment_dispense_counter(amount)
+        await feeder.async_feed_portion(amount)
+        await coordinator.increment_dispense_counter(amount)
 
     dispense_schema = vol.Schema({
         vol.Optional("amount", default=1): int

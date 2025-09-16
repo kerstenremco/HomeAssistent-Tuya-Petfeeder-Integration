@@ -2,7 +2,6 @@ from homeassistant.components.switch import SwitchEntity
 from homeassistant.helpers.entity import DeviceInfo
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 from .const import DOMAIN
-from .feeder import Feeder
 
 
 async def async_setup_entry(hass, entry, async_add_entities):
@@ -37,8 +36,8 @@ class PetFeederLed(CoordinatorEntity, SwitchEntity):
 
     async def async_turn_on(self, **kwargs):
         await self._feeder.async_toggle_light(True)
-        self.coordinator.data.update({"led_status": True})
+        await self.coordinator.async_refresh()
 
     async def async_turn_off(self, **kwargs):
         await self._feeder.async_toggle_light(False)
-        self.coordinator.data.update({"led_status": False})
+        await self.coordinator.async_refresh()

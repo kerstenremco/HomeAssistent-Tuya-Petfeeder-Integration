@@ -31,10 +31,13 @@ class Feeder:
         result = await asyncio.get_running_loop().run_in_executor(None, self.toggle_light, turn_on)
         return result
 
-    async def feed_portion(self, portions) -> bool:
-        loop = asyncio.get_running_loop()
-        result = await loop.run_in_executor(None, self.device.set_value, 3, portions)
+    def feed_portion(self, portions) -> bool:
+        result = self.device.set_value(3, portions)
         return 'dps' in result
+
+    async def async_feed_portion(self, portions) -> bool:
+        result = await asyncio.get_running_loop().run_in_executor(None, self.feed_portion, portions)
+        return result
 
     def check_local_connection(self):
         self.device = tinytuya.Device(self.device_id, self.host, self.local_key, connection_timeout=1, version=3.3,

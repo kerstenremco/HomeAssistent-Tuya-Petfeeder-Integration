@@ -32,5 +32,5 @@ class PetFeederDispenseButton(CoordinatorEntity, ButtonEntity):
         )
 
     async def async_press(self):
-        await self._feeder.feed_portion(1)
-        self.coordinator.increment_dispense_counter(1)
+        await self._feeder.async_feed_portion(1)
+        await self.coordinator.increment_dispense_counter(1)

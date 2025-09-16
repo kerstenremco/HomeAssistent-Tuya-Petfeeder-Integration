@@ -3,7 +3,6 @@ import voluptuous as vol
 from homeassistant import config_entries
 from .const import DOMAIN
 from .feeder import Feeder
-import asyncio
 import logging
 
 
@@ -23,9 +22,12 @@ class PetFeederConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             host = user_input.get("host")
             device_id = user_input.get("device_id")
             local_key = user_input.get("local_key")
-            api_key = user_input.get("api_key")
-            api_secret = user_input.get("api_secret")
-            region = user_input.get("region")
+            api_key = None
+            api_secret = None
+            region = None
+            # api_key = user_input.get("api_key")
+            # api_secret = user_input.get("api_secret")
+            # region = user_input.get("region")
             feeder = Feeder(
                 name=name,
                 device_id=device_id,
@@ -48,9 +50,9 @@ class PetFeederConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                 vol.Optional("host", default="192.168.2.10"): str,
                 vol.Required("device_id"): str,
                 vol.Required("local_key"): str,
-                vol.Optional("api_key"): str,
-                vol.Optional("api_secret"): str,
-                vol.Optional("region", default="eu"): str,
+                # vol.Optional("api_key"): str,
+                # vol.Optional("api_secret"): str,
+                # vol.Optional("region", default="eu"): str,
             }
         )
         return self.async_show_form(
