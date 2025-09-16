@@ -2,6 +2,8 @@
 
 This Home Assistant integration allows you to connect to your Tuya Pet Feeder. This integration is still in development, and it's unknown which kind of Petfeeders are supported.
 
+[![Open your Home Assistant instance and open a repository inside the Home Assistant Community Store.](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=kerstenremco&repository=HomeAssistent-Tuya-Petfeeder-Integration)
+
 ## Features
 
 - Check connection status
@@ -21,6 +23,10 @@ This Home Assistant integration allows you to connect to your Tuya Pet Feeder. T
 1. Add this repository as a custom repository in HACS.
 2. Install the integration via HACS.
 3. Restart Home Assistant.
+
+OR
+
+[![Open your Home Assistant instance and open a repository inside the Home Assistant Community Store.](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=kerstenremco&repository=HomeAssistent-Tuya-Petfeeder-Integration)
 
 ## Configuration
 
